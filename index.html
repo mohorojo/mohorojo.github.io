@@ -11,19 +11,20 @@
         state.innerHTML = msg;
         // addLog ("Event: " + msg + "; status=" + condition + "\n");
     }
-    function addLog (logText) {
+    function addLog (logContents) {
       var log = document.getElementById("log");
-      log.appendChild(document.createTextNode(logText));
+      log.appendChild(logContents);
     }
 
     function loaded() {
         updateOnlineStatus("working", "QQHada.com is mohorojo's site.");
+        addLog (document.createTextNode("2016-06-30: Initialized"));
     }
     </script>
     <style>
     #status {
-        height: 200px;
-        text-align: center;
+        height: 100px;
+        text-align: right;
     }
 
     #status.working {
@@ -38,7 +39,7 @@
         background: white;
         border: 2px solid black;
         white-space: pre;
-        max-height: 200px;
+        max-height: 500px;
         overflow: auto;
     }
     </style>
