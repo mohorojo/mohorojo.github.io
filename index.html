@@ -5,25 +5,21 @@
     <script>
     // online & offline 확인 함수 - 상태표시창에 스타일을 구분하여 부여하고 로그를 기록
     function updateOnlineStatus(msg) {
+        var condition = msg;
         var status = document.getElementById("status");
-
-        // navigator 의 onLine 속성으로 online 여부 확인
-        var condition = navigator.onLine ? "online" : "offline";
         status.setAttribute("class", condition);
         var state = document.getElementById("state");
         state.innerHTML = condition;
-        var log = document.getElementById("log");
-        log.appendChild(document.createTextNode("Event: " + msg + "; status=" + condition + "\n"));
+
+        addLog ("Event: " + msg + "; status=" + condition + "\n");
+    }
+    function addLog (logText) {
+      var log = document.getElementById("log");
+      log.appendChild(document.createTextNode(logText));
     }
 
     function loaded() {
-        updateOnlineStatus("load");
-        document.body.addEventListener("offline", function() {
-            updateOnlineStatus("offline");
-        }, false);
-        document.body.addEventListener("online", function() {
-            updateOnlineStatus("online");
-        }, false);
+        updateOnlineStatus("working");
     }
     </script>
     <style>
@@ -32,17 +28,18 @@
         text-align: center;
     }
 
-    #status.online {
+    #status.working {
         background: green;
     }
 
-    #status.offline {
+    #status.stopped {
         background: red;
     }
 
     #log {
-        background: yellow;
-        border: 2px solid black;
+        background: black;
+        border: 2px solid white;
+        color: white;
         white-space: pre;
         max-height: 200px;
         overflow: auto;
@@ -57,5 +54,4 @@
     </div>
     <div id="log" />
 </body>
-
 </html>
