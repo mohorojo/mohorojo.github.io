@@ -4,14 +4,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script>
     // online & offline 확인 함수 - 상태표시창에 스타일을 구분하여 부여하고 로그를 기록
-    function updateOnlineStatus(msg) {
-        var condition = msg;
+    function updateOnlineStatus(condition, msg) {
         var status = document.getElementById("status");
         status.setAttribute("class", condition);
         var state = document.getElementById("state");
-        state.innerHTML = condition;
-
-        addLog ("Event: " + msg + "; status=" + condition + "\n");
+        state.innerHTML = msg;
+        // addLog ("Event: " + msg + "; status=" + condition + "\n");
     }
     function addLog (logText) {
       var log = document.getElementById("log");
@@ -19,7 +17,7 @@
     }
 
     function loaded() {
-        updateOnlineStatus("working");
+        updateOnlineStatus("working", "QQHada.com is mohorojo's site.");
     }
     </script>
     <style>
@@ -37,9 +35,8 @@
     }
 
     #log {
-        background: black;
-        border: 2px solid white;
-        color: white;
+        background: white;
+        border: 2px solid black;
         white-space: pre;
         max-height: 200px;
         overflow: auto;
