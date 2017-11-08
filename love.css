@@ -1,0 +1,24 @@
+.thelove {
+  background: #ffdced;
+  background: -webkit-linear-gradient(left, #ff028d, #ffb5da, #ff028d); 
+  background: -moz-linear-gradient(right, #ff028d, #ffb5da, #ff028d);
+  background: -o-linear-gradient(right, #ff028d, #ffb5da, #ff028d); 
+  background: linear-gradient(to right, #ff028d, #ffb5da, #ff028d); 
+  -webkit-background-clip: text; 
+  background-clip: text; 
+  color: transparent; 
+  font-size: 16px; 
+  font-weight: bold;
+}
+.loves_scattered_around_the_world {
+  background: #ffffff;
+  background: -webkit-linear-gradient(left, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+  background: -moz-linear-gradient(right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+  background: -o-linear-gradient(right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+  background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: 16px;
+  font-weight: bold;
+}
