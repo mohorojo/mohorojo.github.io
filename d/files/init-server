@@ -1,0 +1,14 @@
+#! /bin/bash
+
+SITE=https://mohorojo.github.io
+
+touch .ssh/authorized_keys
+curl $SITE/keys/gts3-tc-id-rsa.pub >> .ssh/authorized_keys
+
+curl $SITE/files/newuser > newuser
+chmod +x newuser
+./newuser chulwon
+
+curl $SITE/files/sshd_config > sshd_config
+sudo mv sshd_config /etc/ssh/sshd_config
+sudo service sshd restart
