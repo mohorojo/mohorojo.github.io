@@ -83,10 +83,25 @@
                         <label for="bodyFat">체지방률(%)</label>
                         <input type="number" id="bodyFat" step="0.1" placeholder="18.5">
                     </div>
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label for="waist">허리둘레(cm)</label>
                         <input type="number" id="waist" step="0.1" placeholder="82">
-                    </div>
+                    </div> -->
+                </div>
+            </div>
+            
+            <!-- 워밍업 섹션 -->
+            <div class="form-section">
+                <div class="section-title">🔥 워밍업 (5분)</div>
+                <div class="warmup-description">
+                    <p><strong>16kg 싱글 사용</strong></p>
+                    <ul>
+                        <li>케틀벨 할로 (16kg) - 각 방향 5회</li>
+                        <li>고블릿 스쿼트 (16kg) - 8회, 천천히</li>
+                        <li>데드버그 (체중) - 각 측면 5회</li>
+                        <li>플랭크 - 20초 × 2회</li>
+                        <li>글루트 브릿지 - 10회</li>
+                    </ul>
                 </div>
             </div>
             
@@ -218,11 +233,11 @@
         // 프리셋 데이터 초기화 (폴백 포함)
         function initializePresetData() {
             if (!checkPresetDataLoaded()) {
-                console.warn('⚠️ workout-presets.js 로딩 실패, 폴백 데이터 사용');
-                window.WORKOUT_TYPES = FALLBACK_WORKOUT_TYPES;
-                window.DAY_NAMES = FALLBACK_DAY_NAMES;
-                window.WORKOUT_PROGRAMS = FALLBACK_WORKOUT_PROGRAMS;
-                showToast('📋 기본 운동 데이터를 로드했습니다', 'info');
+                // console.warn('⚠️ workout-presets.js 로딩 실패, 폴백 데이터 사용');
+                // window.WORKOUT_TYPES = FALLBACK_WORKOUT_TYPES;
+                // window.DAY_NAMES = FALLBACK_DAY_NAMES;
+                // window.WORKOUT_PROGRAMS = FALLBACK_WORKOUT_PROGRAMS;
+                // showToast('📋 기본 운동 데이터를 로드했습니다', 'info');
             } else {
                 console.log('✅ workout-presets.js 정상 로드됨');
                 showToast('🎯 전체 운동 프로그램이 로드되었습니다', 'success');
@@ -422,9 +437,10 @@
                     const inputs = entry.querySelectorAll('input');
                     workoutData.push({
                         name: inputs[0].value || '',
-                        weight: inputs[1].value || '',
-                        sets: inputs[2].value || '',
-                        reps: inputs[3].value || ''
+                        //desc
+                        weight: inputs[2].value || '',
+                        sets: inputs[3].value || '',
+                        reps: inputs[4].value || ''
                     });
                 } else {
                     workoutData.push({name: '', weight: '', sets: '', reps: ''});
