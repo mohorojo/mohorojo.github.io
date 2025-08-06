@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>케틀벨 운동 기록 트래커</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+
+        .form-section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .section-title {
+            color: #2c3e50;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title::before {
+            content: "💪";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .form-group.small {
+            flex: 0.5;
+            min-width: 100px;
+        }
+
+        .form-group.full {
+            flex: 100%;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #34495e;
+            font-weight: 500;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid rgba(108, 92, 231, 0.2);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .workout-entry {
+            background: rgba(246, 248, 250, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(200, 200, 200, 0.3);
+        }
+
+        .workout-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .add-workout-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: transform 0.2s ease;
+        }
+
+        .add-workout-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .remove-workout-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            float: right;
+        }
+
+        .save-btn {
+            background: linear-gradient(45deg, #00b894, #00a085);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 184, 148, 0.3);
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(-50px);
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .toast.success {
+            background: #00b894;
+        }
+
+        .toast.error {
+            background: #e74c3c;
+        }
+
+        .toast.info {
+            background: #667eea;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .rating-slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: linear-gradient(to right, #e74c3c, #f39c12, #00b894);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .rating-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid #667eea;
+            cursor: pointer;
+        }
+
+        .rating-value {
+            text-align: center;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                flex-direction: column;
+            }
+            .form-group {
+                min-width: unset;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏋️‍♂️ 케틀벨 운동 기록</h1>
+            <p>매일의 운동을 기록하고 성장을 추적하세요</p>
+        </div>
+
+        <form id="workoutForm">
+            <!-- 기본 정보 섹션 -->
+            <div class="form-section">
+                <div class="section-title">📅 기본 정보</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="date">날짜</label>
+                        <input type="date" id="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dayOfWeek">요일</label>
+                        <input type="text" id="dayOfWeek" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="workoutType">운동타입</label>
+                        <input type="text" id="workoutType" readonly>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="wakeupTime">기상시간</label>
+                        <input type="time" id="wakeupTime">
+                    </div>
+                    <div class="form-group">
+                        <label for="workoutStartTime">운동시작시간</label>
+                        <input type="time" id="workoutStartTime">
+                    </div>
+                    <div class="form-group">
+                        <label for="totalTime">총운동시간(분)</label>
+                        <input type="number" id="totalTime" min="0" max="120" placeholder="30">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 신체 측정 섹션 -->
+            <div class="form-section">
+                <div class="section-title">📊 신체 측정</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="weight">체중(kg)</label>
+                        <input type="number" id="weight" step="0.1" placeholder="74.5">
+                    </div>
+                    <div class="form-group">
+                        <label for="bodyFat">체지방률(%)</label>
+                        <input type="number" id="bodyFat" step="0.1" placeholder="18.5">
+                    </div>
+<!--                     <div class="form-group">
+                        <label for="waist">허리둘레(cm)</label>
+                        <input type="number" id="waist" step="0.1" placeholder="82">
+                    </div> -->
+                </div>
+            </div>
+          
+            <!-- 컨디션 체크 섹션 -->
+            <div class="form-section">
+                <div class="section-title">💝 컨디션 체크</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="condition">컨디션점수 (1-10)</label>
+                        <input type="range" id="condition" class="rating-slider" min="1" max="10" value="8">
+                        <div class="rating-value" id="conditionValue">8</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="backCondition">허리상태</label>
+                        <select id="backCondition">
+                            <option value="매우좋음">매우좋음</option>
+                            <option value="좋음" selected>좋음</option>
+                            <option value="보통">보통</option>
+                            <option value="약간불편">약간불편</option>
+                            <option value="나쁨">나쁨</option>
+                            <option value="통증">통증</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 운동 기록 섹션 -->
+            <div class="form-section">
+                <div class="section-title">🏋️ 운동 기록</div>
+                <div id="workoutEntries">
+                    <!-- 운동 항목들이 여기에 동적으로 추가됩니다 -->
+                </div>
+                <button type="button" class="add-workout-btn" onclick="addWorkoutEntry()">+ 운동 추가</button>
+            </div>
+
+
+            <!-- 주관적 평가 섹션 -->
+            <div class="form-section">
+                <div class="section-title">💭 오늘의 평가</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="achievement">목표달성도 (1-10)</label>
+                        <input type="range" id="achievement" class="rating-slider" min="1" max="10" value="8">
+                        <div class="rating-value" id="achievementValue">8</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="feeling">운동후기분</label>
+                        <select id="feeling">
+                            <option value="">선택하세요</option>
+                            <option value="최고">최고</option>
+                            <option value="상쾌함">상쾌함</option>
+                            <option value="뿌듯함">뿌듯함</option>
+                            <option value="만족">만족</option>
+                            <option value="보통">보통</option>
+                            <option value="피곤함">피곤함</option>
+                            <option value="힘듦">힘듦</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group full">
+                        <label for="tomorrow">내일의다짐</label>
+                        <input type="text" id="tomorrow" placeholder="내일도 화이팅!">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group full">
+                        <label for="notes">특이사항메모</label>
+                        <textarea id="notes" placeholder="오늘 운동에서 특별했던 점이나 몸 상태 등을 자유롭게 적어보세요..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="save-btn">💾 CSV로 저장 (클립보드 복사)</button>
+        </form>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+        // 운동 타입 매핑
+        const workoutTypes = {
+            0: '액티브리커버리', // 일요일
+            1: '더블16kg데뷔', // 월요일
+            2: '더블싱글혼합', // 화요일
+            3: '더블16kg마스터리', // 수요일
+            4: '다중무게콤비네이션', // 목요일
+            5: '더블16kg파워', // 금요일
+            6: '페어링시스템' // 토요일
+        };
+
+        // 요일명
+        const dayNames = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+
+        // 요일별 기본 운동 프로그램
+        const workoutPrograms = {
+            0: [ // 일요일 - 액티브리커버리
+                {name: '케틀벨요가플로우', weight: '16kg', sets: '1', reps: '60초'},
+                {name: '브리딩레더', weight: '16kg×2', sets: '1', reps: '55회'},
+                {name: '모빌리티캐리투어', weight: '16kg', sets: '1', reps: '240초'},
+                {name: '리스토레이티브홀드', weight: '16kg', sets: '1', reps: '180초'}
+            ],
+            1: [ // 월요일 - 더블16kg데뷔
+                {name: '더블16kg데드리프트', weight: '16kg×2', sets: '4', reps: '48'},
+                {name: '더블16kg로우', weight: '16kg×2', sets: '4', reps: '40'},
+                {name: '더블16kg플로어프레스', weight: '16kg×2', sets: '4', reps: '36'},
+                {name: '더블16kg파머스캐리', weight: '16kg×2', sets: '4', reps: '180초'}
+            ],
+            2: [ // 화요일 - 더블싱글혼합
+                {name: '더블16kg프론트스쿼트', weight: '16kg×2', sets: '4', reps: '52'},
+                {name: '싱글20kg오프셋캐리', weight: '20kg+16kg', sets: '4', reps: '160초'},
+                {name: '더블16kg오버헤드홀드', weight: '16kg×2', sets: '4', reps: '100초'},
+                {name: '20kg싱글암로우+16kg홀드', weight: '20kg+16kg', sets: '4', reps: '32회'}
+            ],
+            3: [ // 수요일 - 더블16kg마스터리
+                {name: '더블16kg플로어프레스', weight: '16kg×2', sets: '4', reps: '32'},
+                {name: '더블16kg고블릿스쿼트', weight: '16kg×2', sets: '4', reps: '40'},
+                {name: '더블16kg파머스캐리', weight: '16kg×2', sets: '4', reps: '180초'},
+                {name: '더블16kg클린투프론트스쿼트', weight: '16kg×2', sets: '4', reps: '24'},
+                {name: '더블16kg푸시프레스', weight: '16kg×2', sets: '4', reps: '20'}
+            ],
+            4: [ // 목요일 - 다중무게콤비네이션
+                {name: '그래듀에이티드캐리', weight: '16-20-22.5kg', sets: '3', reps: '9세트'},
+                {name: '아센딩세트스쿼트', weight: '16kg×2→22.5kg', sets: '3', reps: '45회'},
+                {name: '트라이세트로우', weight: '16-20-22.5kg', sets: '3', reps: '23회'},
+                {name: '웨이브프레스', weight: '16kg×2→20kg→24kg', sets: '3', reps: '18회'},
+                {name: '피라미드홀드', weight: '16-20-24kg', sets: '3', reps: '135초'}
+            ],
+            5: [ // 금요일 - 더블16kg파워
+                {name: '더블16kg쓰러스터', weight: '16kg×2', sets: '4', reps: '28'},
+                {name: '더블16kg로우투하이풀', weight: '16kg×2', sets: '4', reps: '36'},
+                {name: '더블16kg오버헤드캐리', weight: '16kg×2', sets: '4', reps: '160초'},
+                {name: '더블16kg런지홀드', weight: '16kg×2', sets: '4', reps: '160초'},
+                {name: '더블16kg파머스캐리', weight: '16kg×2', sets: '1', reps: '120초'}
+            ],
+            6: [ // 토요일 - 페어링시스템
+                {name: '더블16kg벤트오버로우', weight: '16kg×2', sets: '3', reps: '36'},
+                {name: '더블16kg오버헤드프레스', weight: '16kg×2', sets: '3', reps: '24'},
+                {name: '더블16kg고블릿스쿼트', weight: '16kg×2', sets: '3', reps: '45'},
+                {name: '더블16kg루마니안데드리프트', weight: '16kg×2', sets: '3', reps: '30'},
+                {name: '더블16kg프론트랙홀드', weight: '16kg×2', sets: '2', reps: '60초'}
+            ]
+        };
+
+        // 페이지 로드시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            // 오늘 날짜 설정
+            const today = new Date();
+            document.getElementById('date').value = today.toISOString().split('T')[0];
+            updateDayAndWorkoutType();
+
+            // 기본 운동 항목 2개 추가
+            addWorkoutEntry();
+            addWorkoutEntry();
+
+            // 슬라이더 이벤트 리스너
+            document.getElementById('condition').addEventListener('input', function() {
+                document.getElementById('conditionValue').textContent = this.value;
+            });
+
+            document.getElementById('achievement').addEventListener('input', function() {
+                document.getElementById('achievementValue').textContent = this.value;
+            });
+
+            // 날짜 변경시 요일과 운동타입 업데이트
+            document.getElementById('date').addEventListener('change', updateDayAndWorkoutType);
+        });
+
+        function updateDayAndWorkoutType() {
+            const dateInput = document.getElementById('date').value;
+            if (dateInput) {
+                const date = new Date(dateInput);
+                const dayIndex = date.getDay();
+                
+                document.getElementById('dayOfWeek').value = dayNames[dayIndex];
+                document.getElementById('workoutType').value = workoutTypes[dayIndex];
+                
+                // 해당 요일의 운동 프로그램으로 자동 세팅
+                loadWorkoutProgram(dayIndex);
+            }
+        }
+
+        function loadWorkoutProgram(dayIndex) {
+            const workoutEntries = document.getElementById('workoutEntries');
+            const program = workoutPrograms[dayIndex];
+            
+            // 기존 운동 항목들 모두 삭제
+            workoutEntries.innerHTML = '';
+            workoutCount = 0;
+            
+            // 해당 요일의 운동 프로그램 추가
+            program.forEach(workout => {
+                addWorkoutEntryWithData(workout.name, workout.weight, workout.sets, workout.reps);
+            });
+
+            // 운동 프로그램 로드 완료 알림
+            const dayName = dayNames[dayIndex];
+            const workoutType = workoutTypes[dayIndex];
+            showToast(`🗓️ ${dayName} - ${workoutType} 운동이 자동으로 설정되었습니다!`, 'info');
+        }
+
+        function addWorkoutEntryWithData(exerciseName = '', weight = '', sets = '', reps = '') {
+            workoutCount++;
+            const workoutEntries = document.getElementById('workoutEntries');
+            
+            const workoutDiv = document.createElement('div');
+            workoutDiv.className = 'workout-entry';
+            workoutDiv.innerHTML = `
+                <div class="workout-title">
+                    운동 ${workoutCount}
+                    <button type="button" class="remove-workout-btn" onclick="removeWorkoutEntry(this)">삭제</button>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>운동이름</label>
+                        <input type="text" value="${exerciseName}" placeholder="더블16kg스쿼트">
+                    </div>
+                    <div class="form-group small">
+                        <label>무게</label>
+                        <input type="text" value="${weight}" placeholder="16kg×2">
+                    </div>
+                    <div class="form-group small">
+                        <label>세트수</label>
+                        <input type="number" min="0" value="${sets}" placeholder="4">
+                    </div>
+                    <div class="form-group small">
+                        <label>총횟수</label>
+                        <input type="text" value="${reps}" placeholder="32">
+                    </div>
+                </div>
+            `;
+            
+            workoutEntries.appendChild(workoutDiv);
+        }
+
+        let workoutCount = 0;
+
+        function addWorkoutEntry() {
+            workoutCount++;
+            const workoutEntries = document.getElementById('workoutEntries');
+            
+            const workoutDiv = document.createElement('div');
+            workoutDiv.className = 'workout-entry';
+            workoutDiv.innerHTML = `
+                <div class="workout-title">
+                    운동 ${workoutCount}
+                    <button type="button" class="remove-workout-btn" onclick="removeWorkoutEntry(this)">삭제</button>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>운동이름</label>
+                        <input type="text" placeholder="더블16kg스쿼트">
+                    </div>
+                    <div class="form-group small">
+                        <label>무게</label>
+                        <input type="text" placeholder="16kg×2">
+                    </div>
+                    <div class="form-group small">
+                        <label>세트수</label>
+                        <input type="number" min="0" placeholder="4">
+                    </div>
+                    <div class="form-group small">
+                        <label>총횟수</label>
+                        <input type="number" min="0" placeholder="32">
+                    </div>
+                </div>
+            `;
+            
+            workoutEntries.appendChild(workoutDiv);
+        }
+
+        function removeWorkoutEntry(button) {
+            const entry = button.closest('.workout-entry');
+            entry.remove();
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast show ${type}`;
+            
+            setTimeout(() => {
+                toast.className = 'toast';
+            }, 3000);
+        }
+
+        function generateCSV() {
+            const form = document.getElementById('workoutForm');
+            const formData = new FormData(form);
+            
+            // 기본 정보
+            const date = document.getElementById('date').value;
+            const dayOfWeek = document.getElementById('dayOfWeek').value;
+            const workoutType = document.getElementById('workoutType').value;
+            const wakeupTime = document.getElementById('wakeupTime').value;
+            const workoutStartTime = document.getElementById('workoutStartTime').value;
+            const condition = document.getElementById('condition').value;
+            const backCondition = document.getElementById('backCondition').value;
+            
+            // 운동 기록 (최대 5개)
+            const workoutEntries = document.querySelectorAll('.workout-entry');
+            const workoutData = [];
+            
+            for (let i = 0; i < 5; i++) {
+                if (i < workoutEntries.length) {
+                    const entry = workoutEntries[i];
+                    const inputs = entry.querySelectorAll('input');
+                    workoutData.push({
+                        name: inputs[0].value || '',
+                        weight: inputs[1].value || '',
+                        sets: inputs[2].value || '',
+                        reps: inputs[3].value || ''
+                    });
+                } else {
+                    workoutData.push({name: '', weight: '', sets: '', reps: ''});
+                }
+            }
+            
+            // 나머지 정보
+            const totalTime = document.getElementById('totalTime').value;
+            const weight = document.getElementById('weight').value;
+            const bodyFat = document.getElementById('bodyFat').value;
+            // const waist = document.getElementById('waist').value;
+            const achievement = document.getElementById('achievement').value;
+            const feeling = document.getElementById('feeling').value;
+            const tomorrow = document.getElementById('tomorrow').value;
+            const notes = document.getElementById('notes').value;
+            
+            // CSV 행 생성
+            const csvRow = [
+                date,
+                dayOfWeek,
+                workoutType,
+                wakeupTime,
+                workoutStartTime,
+                condition,
+                backCondition,
+                ...workoutData.flatMap(w => [w.name, w.weight, w.sets, w.reps]),
+                totalTime,
+                weight,
+                bodyFat,
+                waist,
+                achievement,
+                feeling,
+                tomorrow,
+                notes
+            ].map(field => {
+                // CSV 이스케이프 처리
+                const str = String(field || '');
+                if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+                    return '"' + str.replace(/"/g, '""') + '"';
+                }
+                return str;
+            }).join(',');
+            
+            return csvRow;
+        }
+
+        // 폼 제출 이벤트
+        document.getElementById('workoutForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            try {
+                const csvData = generateCSV();
+                
+                // 클립보드에 복사
+                await navigator.clipboard.writeText(csvData);
+                
+                showToast('✅ CSV 데이터가 클립보드에 복사되었습니다!', 'success');
+                
+                console.log('복사된 CSV 데이터:', csvData);
+                
+            } catch (err) {
+                console.error('클립보드 복사 실패:', err);
+                showToast('❌ 클립보드 복사에 실패했습니다.', 'error');
+                
+                // 폴백: 텍스트 영역에 표시
+                const csvData = generateCSV();
+                const textarea = document.createElement('textarea');
+                textarea.value = csvData;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                
+                showToast('📋 CSV 데이터가 복사되었습니다 (폴백)', 'success');
+            }
+        });
+    </script>
+</body>
+</html>
