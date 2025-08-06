@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>기타 타브 악보 뷰어</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎸 기타 타브 악보 뷰어</h1>
+            <p>기타 타브와 가사를 쉽게 관리하고 연주하세요</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="controls">
+                <button class="btn" onclick="openAddModal()">새 곡 추가</button>
+                <button class="btn" onclick="exportSongs()">곡 목록 내보내기</button>
+                <button class="btn danger" onclick="clearAllSongs()">모든 곡 삭제</button>
+            </div>
+            
+            <div class="song-list" id="songList"></div>
+            
+            <div class="song-container" id="songDisplay" style="display: none;">
+                <div class="song-title">
+                    <h2 id="currentTitle"></h2>
+                    <div class="artist" id="currentArtist"></div>
+                </div>
+                
+                <div id="chordSections"></div>
+            </div>
+            
+            <div class="empty-state" id="emptyState">
+                <div style="font-size: 4em; margin-bottom: 20px;">🎵</div>
+                <h3>아직 추가된 곡이 없습니다</h3>
+                <p>새 곡을 추가해서 시작해보세요!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 곡 추가/수정 모달 -->
+    <div id="songModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">새 곡 추가</h2>
+            
+            <form id="songForm">
+                <div class="form-group">
+                    <label for="songTitle">곡 제목*</label>
+                    <input type="text" id="songTitle" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="songArtist">아티스트</label>
+                    <input type="text" id="songArtist">
+                </div>
+                
+                <div class="form-group">
+                    <label for="songLyrics">가사 및 코드 (형식: [코드, 비트] 가사 내용)*</label>
+                    <textarea id="songLyrics" placeholder="예시:
+[C, 4/4]Amazing grace, [F, 4/4]how sweet the [C, 4/4]sound
+[C, 4/4]That saved a [F, 4/4]wretch like [C, 4/4]me
+[Am, Down-Up]I once was [F, Down-Up]lost, but [C, Down-Up]now I'm [G, Down-Up]found
+[C, 6/8 아르페지오]Was blind, but [F, 6/8 아르페지오]now I [C, 6/8 아르페지오]see
+
+비트 예시: 4/4, 3/4, 6/8, Down-Up, Down-Down-Up-Up-Down-Up, 아르페지오
+지원 코드: C, Am, F, G, Em, Dm, G7, Em7, D, A, E, Bm, C7, Am7, Fmaj7" required></textarea>
+                </div>
+                
+                <button type="submit" class="btn">저장</button>
+                <button type="button" class="btn danger" onclick="closeModal()">취소</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="songs.js"></script>
+    <script src="guitar-tabs.js"></script>
+</body>
+</html>
