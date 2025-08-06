@@ -1,9 +1,10 @@
 /**
  * 케틀벨 운동 프로그램 프리셋
+ * Pure HTML/JavaScript 환경을 위한 브라우저 호환 버전
  * 7일 로테이션 시스템에 맞춘 요일별 운동 프로그램
  */
 
-// 운동 타입 매핑
+// 운동 타입 매핑 (전역 변수)
 const WORKOUT_TYPES = {
     0: '액티브리커버리', // 일요일
     1: '더블16kg데뷔', // 월요일
@@ -14,10 +15,10 @@ const WORKOUT_TYPES = {
     6: '페어링시스템' // 토요일
 };
 
-// 요일명
+// 요일명 (전역 변수)
 const DAY_NAMES = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
 
-// 요일별 기본 운동 프로그램
+// 요일별 기본 운동 프로그램 (전역 변수)
 const WORKOUT_PROGRAMS = {
     // 일요일 - 액티브 리커버리
     0: [
@@ -272,116 +273,188 @@ const WORKOUT_PROGRAMS = {
     ]
 };
 
-// 운동 강도 가이드라인 (주차별)
+// 운동 강도 가이드라인 (주차별) - 전역 변수
 const INTENSITY_GUIDELINES = {
     week1_2: {
         description: "적응기 - 더블 케틀벨 균형감각 습득",
         intensity: "70%",
-        focus: "동작 익히기, 폼 완성"
+        focus: "동작 익히기, 폼 완성",
+        tips: ["가벼운 무게로 시작", "정확한 폼 우선", "충분한 휴식"]
     },
     week3_4: {
         description: "발전기 - 좌우 동시 동작의 완성도",
         intensity: "80%",
-        focus: "더 복잡한 조합 동작"
+        focus: "더 복잡한 조합 동작",
+        tips: ["동작 연결성 향상", "밸런스 감각 발달", "점진적 강도 증가"]
     },
     week5_6: {
         description: "강화기 - 더블 케틀벨의 폭발력 개발",
         intensity: "85-90%",
-        focus: "무거운 무게와의 혼합 사용"
+        focus: "무거운 무게와의 혼합 사용",
+        tips: ["파워 개발", "스피드 향상", "고강도 적응"]
     },
     week7_8: {
         description: "마스터기 - 창의적 조합과 개인 기록",
         intensity: "90-95%",
-        focus: "더블 20kg 도전 준비"
+        focus: "더블 20kg 도전 준비",
+        tips: ["개인 기록 도전", "복합 동작 마스터", "차기 프로그램 준비"]
     }
 };
 
-// 운동별 주의사항 및 팁
+// 운동별 주의사항 및 팁 - 전역 변수
 const EXERCISE_TIPS = {
     "더블케틀벨_일반": [
         "양손 케틀벨의 타이밍을 정확히 맞추세요",
         "좌우 케틀벨의 높이와 각도를 일치시키세요",
-        "더블 부하에 맞는 적절한 호흡 패턴을 유지하세요"
+        "더블 부하에 맞는 적절한 호흡 패턴을 유지하세요",
+        "처음에는 가벼운 무게로 협응력부터 기르세요"
     ],
     "허리보호": [
         "모든 동작에서 허리 중립 자세를 유지하세요",
         "코어를 사전에 활성화하고 시작하세요",
-        "통증이나 불편함을 느끼면 즉시 중단하세요"
+        "통증이나 불편함을 느끼면 즉시 중단하세요",
+        "워밍업과 쿨다운을 절대 건너뛰지 마세요"
     ],
     "점진적_발전": [
         "첫 주는 가벼운 무게로 폼을 익히세요",
         "매주 1-2회씩 반복 횟수를 늘려가세요",
-        "컨디션이 좋지 않으면 강도를 줄이세요"
+        "컨디션이 좋지 않으면 강도를 줄이세요",
+        "무게 증가는 폼이 완벽해진 후에 하세요"
+    ],
+    "안전수칙": [
+        "케틀벨 주변에 충분한 공간을 확보하세요",
+        "바닥이 미끄럽지 않은지 확인하세요",
+        "운동 전 관절과 근육을 충분히 풀어주세요",
+        "물을 충분히 준비하고 수시로 수분 보충하세요"
     ]
 };
 
-// 프리셋 관련 유틸리티 함수들
-const WorkoutPresetUtils = {
-    // 특정 요일의 운동 프로그램 가져오기
-    getProgramByDay: function(dayIndex) {
-        return WORKOUT_PROGRAMS[dayIndex] || [];
-    },
+// 프리셋 관련 유틸리티 함수들 - 전역 함수
+function getProgramByDay(dayIndex) {
+    return WORKOUT_PROGRAMS[dayIndex] || [];
+}
 
-    // 운동 타입명 가져오기
-    getWorkoutTypeName: function(dayIndex) {
-        return WORKOUT_TYPES[dayIndex] || '알 수 없음';
-    },
+function getWorkoutTypeName(dayIndex) {
+    return WORKOUT_TYPES[dayIndex] || '알 수 없음';
+}
 
-    // 요일명 가져오기
-    getDayName: function(dayIndex) {
-        return DAY_NAMES[dayIndex] || '알 수 없음';
-    },
+function getDayName(dayIndex) {
+    return DAY_NAMES[dayIndex] || '알 수 없음';
+}
 
-    // 특정 주차의 강도 가이드라인 가져오기
-    getIntensityGuide: function(week) {
-        if (week <= 2) return INTENSITY_GUIDELINES.week1_2;
-        if (week <= 4) return INTENSITY_GUIDELINES.week3_4;
-        if (week <= 6) return INTENSITY_GUIDELINES.week5_6;
-        return INTENSITY_GUIDELINES.week7_8;
-    },
+function getIntensityGuide(week) {
+    if (week <= 2) return INTENSITY_GUIDELINES.week1_2;
+    if (week <= 4) return INTENSITY_GUIDELINES.week3_4;
+    if (week <= 6) return INTENSITY_GUIDELINES.week5_6;
+    return INTENSITY_GUIDELINES.week7_8;
+}
 
-    // 운동별 팁 가져오기
-    getExerciseTips: function(category) {
-        return EXERCISE_TIPS[category] || [];
-    },
+function getExerciseTips(category) {
+    return EXERCISE_TIPS[category] || [];
+}
 
-    // 전체 주간 프로그램 개요 가져오기
-    getWeeklyOverview: function() {
-        const overview = [];
-        for (let i = 0; i < 7; i++) {
-            overview.push({
-                day: DAY_NAMES[i],
-                workoutType: WORKOUT_TYPES[i],
-                exerciseCount: WORKOUT_PROGRAMS[i].length,
-                mainFocus: this.getMainFocus(i)
+function getWeeklyOverview() {
+    const overview = [];
+    for (let i = 0; i < 7; i++) {
+        overview.push({
+            day: DAY_NAMES[i],
+            workoutType: WORKOUT_TYPES[i],
+            exerciseCount: WORKOUT_PROGRAMS[i].length,
+            mainFocus: getMainFocus(i)
+        });
+    }
+    return overview;
+}
+
+function getMainFocus(dayIndex) {
+    const focuses = {
+        0: "회복과 이동성",
+        1: "더블 케틀벨 기초",
+        2: "무게 조합 훈련",
+        3: "기술 완성도",
+        4: "창의적 조합",
+        5: "최대 파워",
+        6: "균형과 대칭"
+    };
+    return focuses[dayIndex] || "전반적 체력";
+}
+
+// 추가 헬퍼 함수들
+function getWorkoutDescription(dayIndex, exerciseIndex) {
+    const program = WORKOUT_PROGRAMS[dayIndex];
+    if (program && program[exerciseIndex]) {
+        return program[exerciseIndex].description || '';
+    }
+    return '';
+}
+
+function getTotalExerciseCount(dayIndex) {
+    const program = WORKOUT_PROGRAMS[dayIndex];
+    return program ? program.length : 0;
+}
+
+function getEstimatedDuration(dayIndex) {
+    const durations = {
+        0: 25, // 액티브 리커버리
+        1: 30, // 더블16kg데뷔
+        2: 32, // 더블싱글혼합
+        3: 30, // 더블16kg마스터리 (타바타)
+        4: 32, // 다중무게콤비네이션
+        5: 35, // 더블16kg파워 (파이널 번아웃 포함)
+        6: 28  // 페어링시스템
+    };
+    return durations[dayIndex] || 30;
+}
+
+// 운동 프로그램 검증 함수
+function validateWorkoutProgram() {
+    let isValid = true;
+    let errors = [];
+    
+    for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
+        const program = WORKOUT_PROGRAMS[dayIndex];
+        if (!program || program.length === 0) {
+            errors.push(`${DAY_NAMES[dayIndex]} 프로그램이 비어있습니다.`);
+            isValid = false;
+        } else {
+            program.forEach((exercise, index) => {
+                if (!exercise.name) {
+                    errors.push(`${DAY_NAMES[dayIndex]} ${index + 1}번째 운동의 이름이 없습니다.`);
+                    isValid = false;
+                }
+                if (!exercise.weight) {
+                    errors.push(`${DAY_NAMES[dayIndex]} ${index + 1}번째 운동의 무게가 설정되지 않았습니다.`);
+                    isValid = false;
+                }
             });
         }
-        return overview;
-    },
-
-    // 요일별 주요 초점 가져오기
-    getMainFocus: function(dayIndex) {
-        const focuses = {
-            0: "회복과 이동성",
-            1: "더블 케틀벨 기초",
-            2: "무게 조합 훈련",
-            3: "기술 완성도",
-            4: "창의적 조합",
-            5: "최대 파워",
-            6: "균형과 대칭"
-        };
-        return focuses[dayIndex] || "전반적 체력";
     }
-};
+    
+    return { isValid, errors };
+}
 
-// 전역으로 사용할 수 있도록 export (Node.js 환경에서)
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-        WORKOUT_TYPES,
-        DAY_NAMES,
-        WORKOUT_PROGRAMS,
-        INTENSITY_GUIDELINES,
-        EXERCISE_TIPS,
-        WorkoutPresetUtils
-    };
+// 디버깅을 위한 콘솔 출력 (개발용)
+function printWorkoutSummary() {
+    console.log('🏋️‍♂️ 케틀벨 운동 프로그램 요약');
+    console.log('================================');
+    
+    for (let i = 0; i < 7; i++) {
+        const program = WORKOUT_PROGRAMS[i];
+        console.log(`${DAY_NAMES[i]} (${WORKOUT_TYPES[i]}): ${program.length}개 운동`);
+        program.forEach((exercise, index) => {
+            console.log(`  ${index + 1}. ${exercise.name} - ${exercise.weight} × ${exercise.sets}세트 ${exercise.reps}`);
+        });
+        console.log('');
+    }
+}
+
+// 개발 모드에서만 실행 (선택사항)
+if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+    console.log('🎯 케틀벨 운동 프리셋이 로드되었습니다.');
+    const validation = validateWorkoutProgram();
+    if (validation.isValid) {
+        console.log('✅ 모든 운동 프로그램이 정상적으로 설정되었습니다.');
+    } else {
+        console.warn('⚠️ 운동 프로그램에 문제가 있습니다:', validation.errors);
+    }
 }
