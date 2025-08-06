@@ -71,15 +71,6 @@
                 </div>
             </div>
 
-            <!-- 운동 기록 섹션 -->
-            <div class="form-section">
-                <div class="section-title">🏋️ 운동 기록</div>
-                <div id="workoutEntries">
-                    <!-- 운동 항목들이 여기에 동적으로 추가됩니다 -->
-                </div>
-                <button type="button" class="add-workout-btn" onclick="addWorkoutEntry()">+ 운동 추가</button>
-            </div>
-
             <!-- 신체 측정 섹션 -->
             <div class="form-section">
                 <div class="section-title">📊 신체 측정 (선택사항)</div>
@@ -98,9 +89,18 @@
                     </div>
                 </div>
             </div>
-
-            <!-- 주관적 평가 섹션 -->
+            
+            <!-- 운동 기록 섹션 -->
             <div class="form-section">
+                <div class="section-title">🏋️ 운동 기록</div>
+                <div id="workoutEntries">
+                    <!-- 운동 항목들이 여기에 동적으로 추가됩니다 -->
+                </div>
+                <button type="button" class="add-workout-btn" onclick="addWorkoutEntry()">+ 운동 추가</button>
+            </div>
+            
+            <!-- 주관적 평가 섹션 -->
+            <!-- <div class="form-section">
                 <div class="section-title">💭 오늘의 평가</div>
                 <div class="form-row">
                     <div class="form-group">
@@ -134,7 +134,7 @@
                         <textarea id="notes" placeholder="오늘 운동에서 특별했던 점이나 몸 상태 등을 자유롭게 적어보세요..."></textarea>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
             <button type="submit" class="save-btn">💾 CSV로 저장 (클립보드 복사)</button>
         </form>
@@ -297,7 +297,7 @@
             
             // 해당 요일의 운동 프로그램 추가
             program.forEach(workout => {
-                addWorkoutEntryWithData(workout.name, workout.weight, workout.sets, workout.reps);
+                addWorkoutEntryWithData(workout.name, workout.description, workout.weight, workout.sets, workout.reps);
             });
 
             // 운동 프로그램 로드 완료 알림
@@ -306,7 +306,7 @@
             showToast(`🗓️ ${dayName} - ${workoutType} 운동이 자동으로 설정되었습니다!`, 'info');
         }
 
-        function addWorkoutEntryWithData(exerciseName = '', weight = '', sets = '', reps = '') {
+        function addWorkoutEntryWithData(exerciseName = '', desc = '', weight = '', sets = '', reps = '') {
             workoutCount++;
             const workoutEntries = document.getElementById('workoutEntries');
             
@@ -321,6 +321,10 @@
                     <div class="form-group">
                         <label>운동이름</label>
                         <input type="text" value="${exerciseName}" placeholder="더블16kg스쿼트">
+                    </div>
+                    <div class="form-group">
+                        <label>설명</label>
+                        <input type="text" value="${desc}" placeholder="운동법">
                     </div>
                     <div class="form-group small">
                         <label>무게</label>
@@ -357,6 +361,10 @@
                     <div class="form-group">
                         <label>운동이름</label>
                         <input type="text" placeholder="더블16kg스쿼트">
+                    </div>
+                    <div class="form-group">
+                        <label>설명</label>
+                        <input type="text" placeholder="">
                     </div>
                     <div class="form-group small">
                         <label>무게</label>
@@ -404,11 +412,11 @@
             const condition = document.getElementById('condition').value;
             const backCondition = document.getElementById('backCondition').value;
             
-            // 운동 기록 (최대 5개)
+            // 운동 기록 (최대 10개)
             const workoutEntries = document.querySelectorAll('.workout-entry');
             const workoutData = [];
             
-            for (let i = 0; i < 5; i++) {
+            for (let i = 0; i < 10; i++) {
                 if (i < workoutEntries.length) {
                     const entry = workoutEntries[i];
                     const inputs = entry.querySelectorAll('input');
