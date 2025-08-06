@@ -287,10 +287,10 @@
                     </div>
                 </div>
             </div>
-
+            
             <!-- 신체 측정 섹션 -->
             <div class="form-section">
-                <div class="section-title">📊 신체 측정</div>
+                <div class="section-title">📊 신체 측정 (선택사항)</div>
                 <div class="form-row">
                     <div class="form-group">
                         <label for="weight">체중(kg)</label>
@@ -300,13 +300,13 @@
                         <label for="bodyFat">체지방률(%)</label>
                         <input type="number" id="bodyFat" step="0.1" placeholder="18.5">
                     </div>
-<!--                     <div class="form-group">
+                    <div class="form-group">
                         <label for="waist">허리둘레(cm)</label>
                         <input type="number" id="waist" step="0.1" placeholder="82">
-                    </div> -->
+                    </div>
                 </div>
             </div>
-          
+            
             <!-- 컨디션 체크 섹션 -->
             <div class="form-section">
                 <div class="section-title">💝 컨디션 체크</div>
@@ -383,70 +383,10 @@
 
     <div id="toast" class="toast"></div>
 
+    <!-- 운동 프리셋 데이터 외부 파일 로드 -->
+    <script src="workout-presets.js"></script>
+    
     <script>
-        // 운동 타입 매핑
-        const workoutTypes = {
-            0: '액티브리커버리', // 일요일
-            1: '더블16kg데뷔', // 월요일
-            2: '더블싱글혼합', // 화요일
-            3: '더블16kg마스터리', // 수요일
-            4: '다중무게콤비네이션', // 목요일
-            5: '더블16kg파워', // 금요일
-            6: '페어링시스템' // 토요일
-        };
-
-        // 요일명
-        const dayNames = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
-
-        // 요일별 기본 운동 프로그램
-        const workoutPrograms = {
-            0: [ // 일요일 - 액티브리커버리
-                {name: '케틀벨요가플로우', weight: '16kg', sets: '1', reps: '60초'},
-                {name: '브리딩레더', weight: '16kg×2', sets: '1', reps: '55회'},
-                {name: '모빌리티캐리투어', weight: '16kg', sets: '1', reps: '240초'},
-                {name: '리스토레이티브홀드', weight: '16kg', sets: '1', reps: '180초'}
-            ],
-            1: [ // 월요일 - 더블16kg데뷔
-                {name: '더블16kg데드리프트', weight: '16kg×2', sets: '4', reps: '48'},
-                {name: '더블16kg로우', weight: '16kg×2', sets: '4', reps: '40'},
-                {name: '더블16kg플로어프레스', weight: '16kg×2', sets: '4', reps: '36'},
-                {name: '더블16kg파머스캐리', weight: '16kg×2', sets: '4', reps: '180초'}
-            ],
-            2: [ // 화요일 - 더블싱글혼합
-                {name: '더블16kg프론트스쿼트', weight: '16kg×2', sets: '4', reps: '52'},
-                {name: '싱글20kg오프셋캐리', weight: '20kg+16kg', sets: '4', reps: '160초'},
-                {name: '더블16kg오버헤드홀드', weight: '16kg×2', sets: '4', reps: '100초'},
-                {name: '20kg싱글암로우+16kg홀드', weight: '20kg+16kg', sets: '4', reps: '32회'}
-            ],
-            3: [ // 수요일 - 더블16kg마스터리
-                {name: '더블16kg플로어프레스', weight: '16kg×2', sets: '4', reps: '32'},
-                {name: '더블16kg고블릿스쿼트', weight: '16kg×2', sets: '4', reps: '40'},
-                {name: '더블16kg파머스캐리', weight: '16kg×2', sets: '4', reps: '180초'},
-                {name: '더블16kg클린투프론트스쿼트', weight: '16kg×2', sets: '4', reps: '24'},
-                {name: '더블16kg푸시프레스', weight: '16kg×2', sets: '4', reps: '20'}
-            ],
-            4: [ // 목요일 - 다중무게콤비네이션
-                {name: '그래듀에이티드캐리', weight: '16-20-22.5kg', sets: '3', reps: '9세트'},
-                {name: '아센딩세트스쿼트', weight: '16kg×2→22.5kg', sets: '3', reps: '45회'},
-                {name: '트라이세트로우', weight: '16-20-22.5kg', sets: '3', reps: '23회'},
-                {name: '웨이브프레스', weight: '16kg×2→20kg→24kg', sets: '3', reps: '18회'},
-                {name: '피라미드홀드', weight: '16-20-24kg', sets: '3', reps: '135초'}
-            ],
-            5: [ // 금요일 - 더블16kg파워
-                {name: '더블16kg쓰러스터', weight: '16kg×2', sets: '4', reps: '28'},
-                {name: '더블16kg로우투하이풀', weight: '16kg×2', sets: '4', reps: '36'},
-                {name: '더블16kg오버헤드캐리', weight: '16kg×2', sets: '4', reps: '160초'},
-                {name: '더블16kg런지홀드', weight: '16kg×2', sets: '4', reps: '160초'},
-                {name: '더블16kg파머스캐리', weight: '16kg×2', sets: '1', reps: '120초'}
-            ],
-            6: [ // 토요일 - 페어링시스템
-                {name: '더블16kg벤트오버로우', weight: '16kg×2', sets: '3', reps: '36'},
-                {name: '더블16kg오버헤드프레스', weight: '16kg×2', sets: '3', reps: '24'},
-                {name: '더블16kg고블릿스쿼트', weight: '16kg×2', sets: '3', reps: '45'},
-                {name: '더블16kg루마니안데드리프트', weight: '16kg×2', sets: '3', reps: '30'},
-                {name: '더블16kg프론트랙홀드', weight: '16kg×2', sets: '2', reps: '60초'}
-            ]
-        };
 
         // 페이지 로드시 초기화
         document.addEventListener('DOMContentLoaded', function() {
@@ -478,8 +418,8 @@
                 const date = new Date(dateInput);
                 const dayIndex = date.getDay();
                 
-                document.getElementById('dayOfWeek').value = dayNames[dayIndex];
-                document.getElementById('workoutType').value = workoutTypes[dayIndex];
+                document.getElementById('dayOfWeek').value = DAY_NAMES[dayIndex];
+                document.getElementById('workoutType').value = WORKOUT_TYPES[dayIndex];
                 
                 // 해당 요일의 운동 프로그램으로 자동 세팅
                 loadWorkoutProgram(dayIndex);
@@ -488,7 +428,7 @@
 
         function loadWorkoutProgram(dayIndex) {
             const workoutEntries = document.getElementById('workoutEntries');
-            const program = workoutPrograms[dayIndex];
+            const program = WORKOUT_PROGRAMS[dayIndex];
             
             // 기존 운동 항목들 모두 삭제
             workoutEntries.innerHTML = '';
@@ -500,8 +440,8 @@
             });
 
             // 운동 프로그램 로드 완료 알림
-            const dayName = dayNames[dayIndex];
-            const workoutType = workoutTypes[dayIndex];
+            const dayName = DAY_NAMES[dayIndex];
+            const workoutType = WORKOUT_TYPES[dayIndex];
             showToast(`🗓️ ${dayName} - ${workoutType} 운동이 자동으로 설정되었습니다!`, 'info');
         }
 
@@ -626,7 +566,7 @@
             const totalTime = document.getElementById('totalTime').value;
             const weight = document.getElementById('weight').value;
             const bodyFat = document.getElementById('bodyFat').value;
-            // const waist = document.getElementById('waist').value;
+            const waist = document.getElementById('waist').value;
             const achievement = document.getElementById('achievement').value;
             const feeling = document.getElementById('feeling').value;
             const tomorrow = document.getElementById('tomorrow').value;
@@ -692,6 +632,9 @@
                 showToast('📋 CSV 데이터가 복사되었습니다 (폴백)', 'success');
             }
         });
+    </script>
+</body>
+</html>
     </script>
 </body>
 </html>
